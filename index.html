@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CINE-NAVIGATOR — Твой идеальный киновечер</title>
+  <!-- Современные шрифты для эффекта премиального онлайн-кинотеатра -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <canvas id="spaceCanvas" aria-hidden="true"></canvas>
+  <canvas id="nebulaCanvas" aria-hidden="true"></canvas>
+  <div class="digital-rain-loader" id="digitalRainLoader" aria-hidden="true">
+    <canvas id="digitalRainCanvas"></canvas>
+    <span class="digital-rain-label">СИСТЕМА ЗАГРУЖАЕТСЯ</span>
+  </div>
+
+  <!-- Приветственное окно (Модалка) -->
+  <div class="modal-overlay" id="welcomeModal">
+    <div class="modal-card">
+      <h2>🍿 CINE-NAVIGATOR ВСТРЕЧАЕТ!</h2>
+      <p>Хватит тратить два часа на выбор фильма. Наша система подберёт идеальное кино под твою еду и свободное время за секунду.</p>
+      <label class="nickname-label" for="nicknameInput">Как к тебе обращаться?</label>
+      <input id="nicknameInput" class="nickname-input" type="text" maxlength="24" placeholder="Введи свой никнейм" autocomplete="nickname">
+      <div class="modal-info-box">
+        <p><strong>Разработчик:</strong> Кузьменко Матвей</p>
+        <p><strong>Внутри:</strong> Огромная база шедевров, умный фильтр хронометража, симулятор «Кино под еду» и кнопка «Испытать удачу».</p>
+      </div>
+      <button class="modal-close-btn" type="button" onclick="closeWelcomeModal()">НАЙТИ ФИЛЬМ →</button>
+    </div>
+  </div>
+
+  <!-- Главный контейнер -->
+  <div class="wiki-container" id="mainContainer" style="display: none;">
+    
+    <!-- Шапка сайта -->
+    <header class="main-header">
+      <h1 data-text="🎬 CINE-NAVIGATOR" onclick="switchSection('about')">🎬 CINE-NAVIGATOR</h1>
+      <p class="tagline">Твой личный гид по кинематографу · Автор: <span class="author-name">Кузьменко Матвей</span></p>
+      <div class="theme-switcher" role="group" aria-label="Цветовая тема сайта">
+        <span class="theme-switcher-label">Неоновая тема</span>
+        <button class="theme-dot theme-dot-blue is-active" type="button" data-theme-choice="blue" aria-label="Синяя тема" aria-pressed="true" title="Синяя тема"></button>
+        <button class="theme-dot theme-dot-red" type="button" data-theme-choice="red" aria-label="Красная тема" aria-pressed="false" title="Красная тема"></button>
+        <button class="theme-dot theme-dot-green" type="button" data-theme-choice="green" aria-label="Зелёная тема" aria-pressed="false" title="Зелёная тема"></button>
+        <button class="theme-dot theme-dot-purple" type="button" data-theme-choice="purple" aria-label="Фиолетовая тема" aria-pressed="false" title="Фиолетовая тема"></button>
+        <button class="theme-dot theme-dot-yellow" type="button" data-theme-choice="yellow" aria-label="Жёлтая тема" aria-pressed="false" title="Жёлтая тема"></button>
+      </div>
+      <label class="neon-power-control" for="neonPowerRange">
+        <span>⚡ Мощность неона <output id="neonPowerValue" for="neonPowerRange">12</output></span>
+        <input id="neonPowerRange" type="range" min="0" max="32" value="12" step="1" aria-label="Мощность неона">
+      </label>
+      
+      <!-- Меню навигации -->
+      <nav class="nav-menu">
+        <button class="nav-btn active" id="btn-about" onclick="switchSection('about')">📋 О проекте</button>
+        <button class="nav-btn" id="btn-catalog" onclick="switchSection('catalog')">🍿 Каталог кино</button>
+        <button class="nav-btn" id="btn-tools" onclick="switchSection('tools')">⚡ Умный подбор</button>
+        <button class="nav-btn" id="btn-guide" onclick="switchSection('guide')">⚙ Инструкция</button>
+        <button class="nav-btn" id="btn-exit" onclick="exitSite()">❌ Выход</button>
+      </nav>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="content-wrapper">
+
+      <!-- СЕКЦИЯ: О проекте -->
+      <section class="info-section" id="sectionAbout">
+        <h2>📋 О кино-навигаторе</h2>
+        <p>
+CINE-NAVIGATOR — это интерактивный независимый веб-портал, созданный для того, чтобы навсегда решить проблему мучительного выбора фильмов на вечер. Сервис объединяет в себе базу данных из более чем 200 культовых кинокартин и умные смарт-алгоритмы, которые подстраиваются под ваши ресурсы. 
+Проект разработан с нуля всего за 1 день как масштабный фронтенд-эксперимент. В его архитектуру встроены кастомные инструменты: умный фильтр хронометража до сна, симулятор гастрономического соответствия «Кино под еду», анти-спор рулетка для двоих, встроенное неоновое кино-радио для атмосферных саундтреков и динамический переключатель интерфейса между тремя неоновыми темами (Blue, Red, Green). 
+Спроектировано на чистом коде, с душой и на ультра-скорости — ради идеальных вечерних просмотров.
+        </p>
+        <p class="credit-disclaimer">Спроектировано с душой ради идеальных вечерних просмотров.</p>
+      </section>
+
+      <!-- СЕКЦИЯ: Каталог кино -->
+      <section class="info-section" id="sectionCatalog" style="display: none;">
+        <h2>🍿 База культовых фильмов</h2>
+        <p>Фильтруйте фильмы по жанрам или сортируйте по рейтингу и году выпуска.</p>
+        <p id="catalogMovieCount" class="movie-description-note" aria-live="polite"></p>
+        
+        <!-- Фильтры по жанрам -->
+        <div class="tabs-menu">
+          <button class="tab-btn active" id="genre-all" onclick="filterGenre('all')">Все жанры</button>
+          <button class="tab-btn" id="genre-sci-fi" onclick="filterGenre('sci-fi')">Фантастика</button>
+          <button class="tab-btn" id="genre-action" onclick="filterGenre('action')">Экшен / Боевик</button>
+          <button class="tab-btn" id="genre-drama" onclick="filterGenre('drama')">Драма</button>
+          <button class="tab-btn" id="genre-comedy" onclick="filterGenre('comedy')">Комедия</button>
+          <button class="tab-btn" id="genre-detective" onclick="filterGenre('detective')">Детективы</button>
+          <button class="tab-btn" id="genre-romance" onclick="filterGenre('romance')">Мелодрамы</button>
+        </div>
+
+        <!-- Сортировка -->
+        <div class="sort-menu" style="display: flex; justify-content: center; gap: 10px; margin: 15px 0;">
+          <button class="sort-btn active" id="sort-rating" onclick="sortMovies('rating')">Высокий рейтинг ⭐</button>
+          <button class="sort-btn" id="sort-year" onclick="sortMovies('year')">Новинки сначала 📅</button>
+          <button class="sort-btn" id="sort-personal" onclick="sortMovies('personal')">Мой рейтинг 💜</button>
+          <button class="sort-btn lucky-pick-btn" type="button" onclick="pickRandomMovie()">🎲 Испытать удачу</button>
+        </div>
+        <p id="quickPickResult" class="quick-pick-result" aria-live="polite"></p>
+        <div class="catalog-extra-controls">
+          <label class="movie-search-label" for="movieSearch">🔎 Поиск фильма</label>
+          <input id="movieSearch" class="movie-search" type="search" placeholder="Название, 90s, 20-е, 2014 >8, космос, вечер…" oninput="applyMovieFilters()">
+          <button class="sort-btn watchlist-filter-btn" id="watchlistFilterBtn" type="button" aria-pressed="false" onclick="toggleWatchlistFilter()">❤️ Избранное <span id="watchlistCount">0</span></button>
+          <label class="watched-filter-control" for="hideWatchedToggle">
+            <input id="hideWatchedToggle" type="checkbox" onchange="toggleWatchedFilter(this.checked)">
+            <span>Скрыть просмотренные 👁️</span>
+          </label>
+        </div>
+
+        <!-- Сетка для фильмов -->
+        <div class="cars-grid" id="moviesGrid">
+          <!-- Карточки будут генерироваться через JavaScript -->
+        </div>
+      </section>
+
+      <!-- СЕКЦИЯ: Умный подбор и инструменты -->
+      <section class="info-section" id="sectionTools" style="display: none;">
+        <h2>⚡ Алгоритмы умного подбора</h2>
+        
+        <div class="catalog-tools">
+          <!-- Левый блок: Фильтр хронометража до сна -->
+          <div class="credit-box">
+            <p class="tool-eyebrow">ТАЙМ-МЕНЕДЖМЕНТКИНО</p>
+            <h3>Успеть до полуночи</h3>
+            <p class="tool-copy">Укажи, сколько у тебя осталось времени (или часов до сна), и мы отсеем фильмы, которые не уложатся в твой лимит.</p>
+            
+            <form class="credit-form" id="timeForm" onsubmit="event.preventDefault(); window.calculateTimeMovie();">
+              <div style="grid-column: 1 / -1;">
+                <label class="field-label" for="timeLimitInput">Сколько минут есть на просмотр?</label>
+                <input type="number" id="timeLimitInput" placeholder="Например, 120" required min="1" max="600">
+              </div>
+              <button type="submit">Подобрать фильм →</button>
+            </form>
+            <p id="timeResult" class="result-placeholder">Параметры времени не заданы.</p>
+          </div>
+
+          <!-- Правый блок: Подбор под еду -->
+          <div class="luck-box">
+            <span class="luck-mark">🍕</span>
+            <p class="tool-eyebrow">АТМОСФЕРНЫЙ МАТЧИНГ</p>
+            <h3>Кино под твою еду</h3>
+            <p>Выбери, чем планируешь перекусить, а наш робот подберёт идеальную по настроению картину.</p>
+            
+            <select id="foodSelect" style="width: 100%; min-height: 44px; padding: 10px; border-radius: 10px; background: #142036; color: white; border: 1px solid rgba(148,163,184,0.2); margin-top: 10px;">
+              <option value="pizza">🍕 Горячая пицца (для бодрого экшена)</option>
+              <option value="popcorn">🍿 Попкорн (для зрелищной фантастики)</option>
+              <option value="tea">☕ Чай с печеньем (для душевной драмы)</option>
+            </select>
+            
+            <button class="action-btn" type="button" onclick="triggerFoodMovie()">Подобрать под ужин</button>
+            <p id="foodResult" class="result-placeholder" aria-live="polite">Выбери перекус — подберём фильм по настроению.</p>
+          </div>
+
+          <div class="smart-pick-box">
+            <p class="tool-eyebrow">ПОДБОР ПО НАСТРОЕНИЮ</p>
+            <h3>Какое кино хочется?</h3>
+            <label class="field-label" for="moodSelect">Выбери настроение</label>
+            <select id="moodSelect" class="smart-select">
+              <option value="adventure">Хочу напряжения и динамики</option>
+              <option value="thoughtful">Хочу подумать</option>
+              <option value="light">Хочу чего-то лёгкого</option>
+              <option value="romantic">Хочу романтики</option>
+              <option value="fantasy">Хочу погрузиться в другой мир</option>
+            </select>
+            <button class="action-btn" type="button" onclick="pickMovieByMood()">Подобрать по настроению</button>
+            <p id="moodResult" class="result-placeholder" aria-live="polite">Подберём фильм под твой настрой.</p>
+          </div>
+
+          <div class="smart-pick-box blind-mood-box">
+            <p class="tool-eyebrow">СЛЕПОЙ ВЫБОР</p>
+            <h3>Выбери эмоцию — фильм выберет тебя</h3>
+            <p class="tool-copy">Нажми на настроение, чтобы случайно раскрыть подходящий фильм из каталога.</p>
+            <div class="blind-mood-buttons" role="group" aria-label="Выбери настроение для фильма">
+              <button class="blind-mood-btn" type="button" data-blind-mood="cry">😭 Хочу плакать</button>
+              <button class="blind-mood-btn" type="button" data-blind-mood="adrenaline">⚡ Хочу адреналина</button>
+              <button class="blind-mood-btn" type="button" data-blind-mood="mind">🧠 Мозги кипят</button>
+            </div>
+            <p id="blindMoodResult" class="result-placeholder" aria-live="polite">Выбери эмоцию — покажем один фильм вслепую.</p>
+          </div>
+
+          <div class="smart-pick-box">
+            <p class="tool-eyebrow">ИДЕЯ ДЛЯ КИНОВЕЧЕРА</p>
+            <h3>Двойной киносеанс</h3>
+            <p class="tool-copy">Подберём два фильма с наивысшим рейтингом, которые поместятся в общий лимит времени.</p>
+            <label class="field-label" for="doubleFeatureLimit">Сколько минут есть на два фильма?</label>
+            <input class="smart-select" type="number" id="doubleFeatureLimit" value="240" min="60" max="600">
+            <button class="action-btn" type="button" onclick="pickDoubleFeature()">Собрать киносеанс</button>
+            <p id="doubleFeatureResult" class="result-placeholder" aria-live="polite">Укажи общее время для двух фильмов.</p>
+          </div>
+
+          <div class="smart-pick-box personal-recommendation-box">
+            <p class="tool-eyebrow">ПЕРСОНАЛЬНЫЙ АЛГОРИТМ</p>
+            <h3>Рекомендация по твоим оценкам</h3>
+            <p class="tool-copy">Оцени фильмы звёздами в каталоге — рекомендации и персональная сортировка будут учитывать твой вкус.</p>
+            <button class="action-btn" type="button" onclick="recommendFromRatings()">Подобрать для меня ✨</button>
+            <p id="personalRecommendation" class="result-placeholder" aria-live="polite">Оцени несколько фильмов, чтобы получить персональный совет.</p>
+          </div>
+
+          <div class="smart-pick-box watch-history-box">
+            <p class="tool-eyebrow">ТВОЯ КИНОИСТОРИЯ</p>
+            <h3>Киноманский профиль</h3>
+            <p id="watchStatus" class="watch-status" aria-live="polite">Статус: Ленивые зрители 🛋️</p>
+            <p id="watchRecommendation" class="result-placeholder" aria-live="polite">Отметь просмотренные фильмы в каталоге — подберём рекомендацию.</p>
+          </div>
+
+          <div class="smart-pick-box anti-spor-box">
+            <p class="tool-eyebrow">РЕШАЕМ СПОР</p>
+            <h3>Анти-спор</h3>
+            <p class="tool-copy">Не можете выбрать фильм? Пусть кино-рулетка решит за вас.</p>
+            <button class="action-btn" type="button" onclick="openAntiSpor()">🎲 Выбрать победителя</button>
+          </div>
+        </div>
+      </section>
+
+    <!-- СЕКЦИЯ: Инструкция -->
+<section id="sectionGuide" class="info-section" style="display: none;">
+  <h2>⚙️ Руководство по управлению CINE-NAVIGATOR</h2>
+  <p>Добро пожаловать на борт! Этот интерактивный портал работает на продвинутых фронтенд-алгоритмах и полностью управляется в один клик. Вот краткий гайд по функционалу:</p>
+  
+  <ul style="list-style-type: disc; padding-left: 20px; color: #b8c6d7;">
+    <li style="margin-bottom: 10px;"><strong>🎨 Смена неонового стиля:</strong> В самом верху сайта переключай темы (Синий Airbus-хайтек, Агрессивный спорт-режим Audi или Зелёная Матрица). Сайт мгновенно перестроится под твой вайб.</li>
+    <li style="margin-bottom: 10px;"><strong>🍿 Умный каталог:</strong> Фильтруй кино по жанрам, сортируй по рейтингу IMDb или году выпуска. Кнопка «Избранное» сохранит лучшие картины в память твоего браузера, а чекбокс «Скрыть просмотренные» поможет отсеять то, что ты уже видел.</li>
+    <li style="margin-bottom: 10px;"><strong>⏱️ Успеть до полуночи:</strong> Жесткий лимит времени перед сном? Введи доступное количество минут в блоке «Умный подбор» — система автоматически отсеет слишком длинные фильмы и выдаст топ-вариант.</li>
+    <li style="margin-bottom: 10px;"><strong>🍕 Кино под еду:</strong> Робот сопоставит атмосферу картины с твоим ужином. Выбирай перекус (пицца, попкорн или чай) и получай идеальный гастрономический матч.</li>
+    <li style="margin-bottom: 10px;"><strong>🎲 Анти-спор:</strong> Не можете решить, что посмотреть вдвоем? Забивай названия или ID двух фильмов в блок баттла, запускай рулетку, и система сама выберет справедливого победителя на вечер.</li>
+    <li style="margin-bottom: 10px;"><strong>🎧 Кино-радио:</strong> Включай плеер в углу экрана, чтобы запустить плейлист с культовыми атмосферными саундтреками для глубокого погружения.</li>
+  </ul>
+</section>
+
+
+
+    </main>
+
+    <!-- Подвал -->
+    <footer class="site-footer">
+      <p>© 2026 Cine-Navigator. Разработка интерактивной архитектуры: Кузьменко Матвей.</p>
+      <button class="scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">Наверх ↑</button>
+    </footer>
+
+  </div>
+
+  <div class="movie-modal" id="antiSporModal" role="dialog" aria-modal="true" aria-labelledby="antiSporTitle" aria-hidden="true">
+    <div class="movie-modal-card anti-spor-card">
+      <button class="movie-modal-close" type="button" onclick="closeAntiSpor()" aria-label="Закрыть окно">×</button>
+      <p class="tool-eyebrow">КИНО-БАТТЛ</p>
+      <h2 id="antiSporTitle">Анти-спор</h2>
+      <p class="anti-spor-copy">Введи название или ID двух фильмов из каталога.</p>
+      <label class="field-label" for="antiSporMovieOne">Первый фильм</label>
+      <input class="smart-select" id="antiSporMovieOne" type="text" placeholder="Например, Интерстеллар или 1">
+      <label class="field-label" for="antiSporMovieTwo">Второй фильм</label>
+      <input class="smart-select" id="antiSporMovieTwo" type="text" placeholder="Например, Начало или 5">
+      <div class="anti-spor-arena" aria-live="polite">
+        <span id="antiSporSpinner">🍿</span>
+        <span id="antiSporResult">Кто победит в сегодняшнем баттле?</span>
+      </div>
+      <button class="action-btn" id="antiSporStart" type="button" onclick="startAntiSpor()">Начать баттл ⚡</button>
+    </div>
+  </div>
+
+  <div class="movie-modal" id="movieModal" role="dialog" aria-modal="true" aria-labelledby="movieModalTitle" aria-hidden="true">
+    <div class="movie-modal-card">
+      <button class="movie-modal-close" type="button" onclick="closeMovieModal()" aria-label="Закрыть окно">×</button>
+      <h2 id="movieModalTitle"></h2>
+      <div id="movieModalContent"></div>
+      <a id="movieModalFallback" class="movie-modal-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Открыть трейлер на YouTube ↗</a>
+    </div>
+  </div>
+
+  <aside class="cinema-radio" id="cinemaRadio" aria-label="Кино-радио">
+    <div class="radio-heading">
+      <span class="radio-icon" aria-hidden="true">♫</span>
+      <div>
+        <p class="radio-eyebrow">КИНО-РАДИО</p>
+        <p class="radio-title" id="radioTrackTitle">Cornfield Chase · «Интерстеллар»</p>
+      </div>
+      <span class="radio-live-dot" id="radioLiveDot" aria-hidden="true"></span>
+      <button class="radio-collapse-btn" id="radioCollapse" type="button" aria-label="Свернуть кино-радио" aria-expanded="true" title="Свернуть плеер">−</button>
+    </div>
+    <p class="radio-caption" id="radioTrackMood">Официальные клипы и саундтреки · запуск по нажатию</p>
+    <div class="radio-controls">
+      <button class="radio-control-btn" id="radioPrev" type="button" aria-label="Предыдущая композиция" title="Предыдущая">⏮</button>
+      <button class="radio-play-btn" id="radioPlay" type="button" aria-label="Включить кино-радио" aria-pressed="false">▶</button>
+      <button class="radio-control-btn" id="radioNext" type="button" aria-label="Следующая композиция" title="Следующая">⏭</button>
+      <label class="radio-volume" for="radioVolume" aria-label="Громкость">🔈
+        <input id="radioVolume" type="range" min="0" max="100" step="1" value="18">
+      </label>
+    </div>
+    <div class="radio-player-host" id="radioPlayerHost"></div>
+    <p class="radio-status" id="radioStatus" aria-live="polite">Нажми ▶, чтобы включить музыку</p>
+    <a class="radio-fallback-link" id="radioFallbackLink" href="https://www.youtube.com/watch?v=UDVtMYqUAyw" target="_blank" rel="noopener noreferrer">Открыть композицию на YouTube ↗</a>
+  </aside>
+
+  <span id="popcornCursor" aria-hidden="true">🍿</span>
+  <script>
+    (() => {
+      const popcornCursor = document.getElementById("popcornCursor");
+      if (!popcornCursor || !window.matchMedia("(pointer: fine)").matches) return;
+
+      document.addEventListener("pointermove", event => {
+        if (event.pointerType !== "mouse") return;
+        popcornCursor.style.left = `${event.clientX}px`;
+        popcornCursor.style.top = `${event.clientY}px`;
+        popcornCursor.classList.add("is-visible");
+      });
+
+      document.addEventListener("pointerleave", () => popcornCursor.classList.remove("is-visible"));
+      document.addEventListener("pointerenter", () => popcornCursor.classList.add("is-visible"));
+    })();
+  </script>
+  <script>
+    (() => {
+      const storage = window.localStorage;
+      const nicknameKey = "cineNavigatorNickname";
+      const native = {
+        getItem: Storage.prototype.getItem.bind(storage),
+        setItem: Storage.prototype.setItem.bind(storage),
+        removeItem: Storage.prototype.removeItem.bind(storage),
+        key: Storage.prototype.key.bind(storage),
+        clear: Storage.prototype.clear.bind(storage)
+      };
+      let nickname = "guest";
+      try {
+        nickname = native.getItem(nicknameKey)?.trim().toLocaleLowerCase("ru") || "guest";
+      } catch (_) {}
+      const profilePrefix = `cineNavigatorProfile:${encodeURIComponent(nickname)}:`;
+      const scopedKey = key => key === nicknameKey ? key : `${profilePrefix}${key}`;
+
+      // Переносим прежние общие данные в профиль текущего ника один раз.
+      try {
+        const oldKeys = Array.from({ length: storage.length }, (_, index) => native.key(index))
+          .filter(key => key && key !== nicknameKey && !key.startsWith("cineNavigatorProfile:"));
+        oldKeys.forEach(key => {
+          const destination = `${profilePrefix}${key}`;
+          if (native.getItem(destination) === null) {
+            const value = native.getItem(key);
+            if (value !== null) native.setItem(destination, value);
+          }
+          native.removeItem(key);
+        });
+      } catch (_) {}
+
+      Object.defineProperties(storage, {
+        getItem: { configurable: true, value: key => native.getItem(scopedKey(String(key))) },
+        setItem: { configurable: true, value: (key, value) => native.setItem(scopedKey(String(key)), String(value)) },
+        removeItem: { configurable: true, value: key => native.removeItem(scopedKey(String(key))) },
+        clear: {
+          configurable: true,
+          value: () => {
+            for (let index = storage.length - 1; index >= 0; index--) {
+              const key = native.key(index);
+              if (key?.startsWith(profilePrefix)) native.removeItem(key);
+            }
+          }
+        }
+      });
+    })();
+  </script>
+  <script src="script.js"></script>
+  <script>
+    // Handle section navigation directly on phones instead of relying on legacy inline handlers.
+    document.addEventListener("click", event => {
+      if (!window.matchMedia("(max-width: 768px)").matches) return;
+      const button = event.target.closest("#btn-about, #btn-catalog, #btn-tools, #btn-guide");
+      if (!button) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const selected = button.id.replace("btn-", "");
+      const sections = {
+        about: document.getElementById("sectionAbout"),
+        catalog: document.getElementById("sectionCatalog"),
+        tools: document.getElementById("sectionTools"),
+        guide: document.getElementById("sectionGuide")
+      };
+      Object.entries(sections).forEach(([name, section]) => {
+        if (section) section.style.display = name === selected ? "block" : "none";
+        document.getElementById(`btn-${name}`)?.classList.toggle("active", name === selected);
+      });
+
+      const section = sections[selected];
+      if (!section) return;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        section.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start"
+        });
+      }));
+    }, true);
+  </script>
+  <script src="personalization.js"></script>
+  <script src="nebula.js"></script>
+  <script>
+    (() => {
+      const themeKey = "cineNavigatorTheme";
+      const themeButtons = document.querySelectorAll("[data-theme-choice]");
+      const allowedThemes = new Set(["blue", "red", "green", "purple", "yellow"]);
+      const applyTheme = theme => {
+        const selectedTheme = allowedThemes.has(theme) ? theme : "blue";
+        document.body.dataset.theme = selectedTheme;
+        themeButtons.forEach(button => {
+          const isActive = button.dataset.themeChoice === selectedTheme;
+          button.classList.toggle("is-active", isActive);
+          button.setAttribute("aria-pressed", String(isActive));
+        });
+      };
+
+      let savedTheme = "blue";
+      try { savedTheme = localStorage.getItem(themeKey) || "blue"; } catch (_) {}
+      applyTheme(savedTheme);
+      themeButtons.forEach(button => button.addEventListener("click", () => {
+        const theme = button.dataset.themeChoice;
+        applyTheme(theme);
+        try { localStorage.setItem(themeKey, theme); } catch (_) {}
+      }));
+    })();
+  </script>
+  <script>
+    (() => {
+      const genreClasses = [
+        { className: "genre-sci-fi", pattern: /фантастик|sci[- ]?fi/i },
+        { className: "genre-action", pattern: /боевик|экшен|action/i },
+        { className: "genre-romance", pattern: /мелодрам|романтик|romance/i },
+        { className: "genre-detective", pattern: /детектив|detective/i }
+      ];
+
+      const applyGenreStyles = () => {
+        document.querySelectorAll(".car-visual").forEach(visual => {
+          const label = visual.querySelector(".visual-kicker")?.textContent || "";
+          const match = genreClasses.find(genre => genre.pattern.test(label));
+          visual.classList.remove(...genreClasses.map(genre => genre.className));
+          if (match) visual.classList.add(match.className);
+        });
+      };
+
+      const grid = document.getElementById("moviesGrid");
+      if (grid) {
+        applyGenreStyles();
+        new MutationObserver(applyGenreStyles).observe(grid, { childList: true, subtree: true, characterData: true });
+      }
+    })();
+  </script>
+  <script>
+    (() => {
+      const profileStorageKey = "cineNavigatorProfileWatched";
+      const nicknameStorageKey = "cineNavigatorNickname";
+      let fallbackWatched = [];
+      try {
+        const savedWatched = JSON.parse(localStorage.getItem(profileStorageKey) || "[]");
+        if (Array.isArray(savedWatched)) fallbackWatched = savedWatched;
+      } catch (_) {}
+
+      const getWatchedMovies = () => {
+        try {
+          if (typeof watchedMovies !== "undefined" && Array.isArray(watchedMovies)) return watchedMovies;
+        } catch (_) {}
+        return fallbackWatched;
+      };
+      const getMovieByIdOrTitle = query => {
+        const value = String(query || "").trim();
+        if (!value || typeof moviesDatabase === "undefined") return null;
+        const byId = moviesDatabase.find(movie => String(movie.id) === value);
+        if (byId) return byId;
+        const normalize = text => String(text).toLocaleLowerCase("ru").replace(/[ё]/g, "е").replace(/[^\p{L}\p{N}]+/gu, "").trim();
+        const needle = normalize(value);
+        return moviesDatabase.find(movie => normalize(movie.title) === needle) ||
+          moviesDatabase.find(movie => normalize(movie.title).includes(needle) || needle.includes(normalize(movie.title))) || null;
+      };
+      const watchedMovieSet = () => {
+        const ids = new Set();
+        getWatchedMovies().forEach(entry => {
+          const value = typeof entry === "object" && entry !== null ? (entry.id ?? entry.title) : entry;
+          const movie = typeof moviesDatabase !== "undefined"
+            ? moviesDatabase.find(item => String(item.id) === String(value) || item.title === String(value))
+            : null;
+          if (movie) ids.add(movie.id);
+        });
+        return ids;
+      };
+
+      window.openAntiSpor = () => {
+        const modal = document.getElementById("antiSporModal");
+        if (!modal) return;
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        document.getElementById("antiSporMovieOne")?.focus();
+      };
+      window.closeAntiSpor = () => {
+        const modal = document.getElementById("antiSporModal");
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+      };
+      window.startAntiSpor = () => {
+        const first = getMovieByIdOrTitle(document.getElementById("antiSporMovieOne")?.value);
+        const second = getMovieByIdOrTitle(document.getElementById("antiSporMovieTwo")?.value);
+        const result = document.getElementById("antiSporResult");
+        const spinner = document.getElementById("antiSporSpinner");
+        const arena = document.querySelector(".anti-spor-arena");
+        const start = document.getElementById("antiSporStart");
+        if (!result || !spinner || !arena || !start) return;
+        if (!first || !second) {
+          result.textContent = "Не нашёл оба фильма. Проверь названия или ID в каталоге.";
+          result.classList.add("is-error");
+          return;
+        }
+        if (first.id === second.id) {
+          result.textContent = "Выбери два разных фильма для баттла.";
+          result.classList.add("is-error");
+          return;
+        }
+        result.classList.remove("is-error", "is-winner");
+        arena.classList.add("is-spinning");
+        start.disabled = true;
+        const options = [first, second];
+        let ticks = 0;
+        const timer = window.setInterval(() => {
+          const current = options[ticks % 2];
+          spinner.textContent = ticks % 2 ? "🍿" : "⚡";
+          result.textContent = `«${current.title}» ↔ «${options[(ticks + 1) % 2].title}»`;
+          ticks++;
+          if (ticks >= 22) {
+            window.clearInterval(timer);
+            arena.classList.remove("is-spinning");
+            const winner = options[Math.floor(Math.random() * options.length)];
+            spinner.textContent = "🏆";
+            result.textContent = `В сегодняшнем баттле побеждает «${winner.title}»!`;
+            result.classList.add("is-winner");
+            start.disabled = false;
+          }
+        }, 100);
+      };
+
+      const updateWatchProfile = () => {
+        const status = document.getElementById("watchStatus");
+        const recommendation = document.getElementById("watchRecommendation");
+        if (!status || !recommendation || typeof moviesDatabase === "undefined") return;
+        const watchedIds = watchedMovieSet();
+        const count = watchedIds.size;
+        let label = "Ленивые зрители 🛋️";
+        if (count >= 51) label = "Экипаж Высшего Пилотажа 🛫👑";
+        else if (count >= 21) label = "Настоящие Киноманы 🎬";
+        else if (count >= 6) label = "Любители попкорна 🍿";
+        status.textContent = `Статус: ${label} · просмотрено ${count}`;
+
+        const genreCounts = new Map();
+        watchedIds.forEach(id => {
+          const movie = moviesDatabase.find(item => item.id === id);
+          if (movie?.genre) genreCounts.set(movie.genre, (genreCounts.get(movie.genre) || 0) + 1);
+        });
+        const favoriteGenre = [...genreCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+        if (!favoriteGenre) {
+          recommendation.textContent = "Отметь просмотренные фильмы в каталоге — подберём рекомендацию.";
+          recommendation.className = "result-placeholder";
+          return;
+        }
+        const watchedSample = moviesDatabase.find(movie => watchedIds.has(movie.id) && movie.genre === favoriteGenre);
+        const nextPick = moviesDatabase
+          .filter(movie => movie.genre === favoriteGenre && !watchedIds.has(movie.id))
+          .map(movie => ({ movie, rating: Number.parseFloat(movie.rating) }))
+          .filter(item => Number.isFinite(item.rating) && item.rating > 0)
+          .sort((a, b) => b.rating - a.rating)[0]?.movie;
+        recommendation.className = "result-placeholder result-success";
+        recommendation.textContent = nextPick && watchedSample
+          ? `Поскольку ты посмотрел(а) «${watchedSample.title}», сегодня тебе может зайти «${nextPick.title}»!`
+          : "В этой категории пока нет просмотренных фильмов с рейтингом для рекомендации.";
+      };
+
+      document.addEventListener("click", event => {
+        const watchedButton = event.target.closest(".watched-btn");
+        if (watchedButton) {
+          const card = watchedButton.closest(".car-card");
+          const title = card?.querySelector(".car-title")?.textContent?.trim();
+          window.setTimeout(() => {
+            try {
+              if (typeof watchedMovies !== "undefined" && Array.isArray(watchedMovies)) {
+                fallbackWatched = watchedMovies.slice();
+              } else if (title) {
+                const movie = getMovieByIdOrTitle(title);
+                const isWatched = watchedButton.classList.contains("is-watched");
+                fallbackWatched = fallbackWatched.filter(item => String(item) !== String(movie?.id) && String(item) !== title);
+                if (isWatched && movie) fallbackWatched.push(movie.id);
+                localStorage.setItem(profileStorageKey, JSON.stringify(fallbackWatched));
+              }
+            } catch (_) {}
+            updateWatchProfile();
+          }, 0);
+        }
+      });
+
+      const nicknameInput = document.getElementById("nicknameInput");
+      const applyNickname = name => {
+        const tagline = document.querySelector(".tagline");
+        if (!tagline) return;
+        let greeting = tagline.querySelector(".saved-nickname");
+        if (!greeting) {
+          greeting = document.createElement("span");
+          greeting.className = "saved-nickname";
+          tagline.prepend(greeting);
+        }
+        greeting.textContent = name ? `Привет, ${name}! · ` : "";
+      };
+      let savedNickname = "";
+      try { savedNickname = localStorage.getItem(nicknameStorageKey) || ""; } catch (_) {}
+      if (nicknameInput) nicknameInput.value = savedNickname;
+      applyNickname(savedNickname);
+      document.querySelector(".modal-close-btn")?.addEventListener("click", () => {
+        const nickname = nicknameInput?.value.trim().slice(0, 24) || "";
+        try { localStorage.setItem(nicknameStorageKey, nickname); } catch (_) {}
+        applyNickname(nickname);
+        if (nickname.trim().toLocaleLowerCase("ru") !== savedNickname.trim().toLocaleLowerCase("ru")) {
+          window.location.reload();
+        }
+      });
+
+      document.getElementById("antiSporModal")?.addEventListener("click", event => {
+        if (event.target.id === "antiSporModal") window.closeAntiSpor();
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") window.closeAntiSpor();
+      });
+      updateWatchProfile();
+      const movieGrid = document.getElementById("moviesGrid");
+      if (movieGrid) new MutationObserver(updateWatchProfile).observe(movieGrid, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+    })();
+  </script>
+  <script>
+    (() => {
+      const tracks = [
+        { title: "Cornfield Chase · «Интерстеллар»", mood: "Hans Zimmer · музыка из фильма «Интерстеллар»", id: "UDVtMYqUAyw" },
+        { title: "Comptine d'un autre été · «Амели»", mood: "Yann Tiersen · спокойная тема из фильма «Амели»", id: "PaXKf0JEzEA" },
+        { title: "Una Mattina · «1+1»", mood: "Ludovico Einaudi · фортепианная тема из фильма «1+1»", id: "b8SkX9CSJQo" }
+      ];
+      const playButton = document.getElementById("radioPlay");
+      const title = document.getElementById("radioTrackTitle");
+      const mood = document.getElementById("radioTrackMood");
+      const status = document.getElementById("radioStatus");
+      const liveDot = document.getElementById("radioLiveDot");
+      const volume = document.getElementById("radioVolume");
+      const playerHost = document.getElementById("radioPlayerHost");
+      const fallbackLink = document.getElementById("radioFallbackLink");
+      const radio = document.getElementById("cinemaRadio");
+      const collapseButton = document.getElementById("radioCollapse");
+      if (!playButton || !title || !mood || !status || !volume || !playerHost) return;
+
+      collapseButton?.addEventListener("click", () => {
+        const isCollapsed = radio.classList.toggle("is-collapsed");
+        collapseButton.textContent = isCollapsed ? "+" : "−";
+        collapseButton.setAttribute("aria-expanded", String(!isCollapsed));
+        collapseButton.setAttribute("aria-label", isCollapsed ? "Развернуть кино-радио" : "Свернуть кино-радио");
+        collapseButton.title = isCollapsed ? "Развернуть плеер" : "Свернуть плеер";
+      });
+
+      let trackIndex = 0;
+      let isPlaying = false;
+
+      const sendPlayerCommand = (func, args = []) => {
+        const frame = playerHost.querySelector("iframe");
+        if (!frame?.contentWindow) return;
+        frame.contentWindow.postMessage(JSON.stringify({ event: "command", func, args }), "https://www.youtube-nocookie.com");
+      };
+      const updateTrack = () => {
+        const track = tracks[trackIndex];
+        title.textContent = track.title;
+        mood.textContent = track.mood;
+        if (fallbackLink) fallbackLink.href = `https://www.youtube.com/watch?v=${track.id}`;
+      };
+      const setPlayingState = playing => {
+        isPlaying = playing;
+        playButton.textContent = playing ? "❚❚" : "▶";
+        playButton.setAttribute("aria-label", playing ? "Поставить кино-радио на паузу" : "Включить кино-радио");
+        playButton.setAttribute("aria-pressed", String(playing));
+        liveDot?.classList.toggle("is-playing", playing);
+        status.textContent = playing ? "Если клип не загрузился, открой его на YouTube ↗" : "Пауза · нажми ▶, чтобы продолжить";
+      };
+      const loadTrack = () => {
+        const track = tracks[trackIndex];
+        const origin = location.origin && location.origin !== "null" ? `&origin=${encodeURIComponent(location.origin)}` : "";
+        const frame = document.createElement("iframe");
+        frame.title = `Воспроизведение: ${track.title}`;
+        frame.src = `https://www.youtube-nocookie.com/embed/${track.id}?autoplay=1&controls=1&enablejsapi=1&playsinline=1${origin}`;
+        frame.allow = "autoplay; encrypted-media; picture-in-picture";
+        frame.allowFullscreen = true;
+        frame.referrerPolicy = "strict-origin-when-cross-origin";
+        playerHost.replaceChildren(frame);
+        frame.addEventListener("load", () => {
+          // YouTube may ignore volume commands until its embedded player is ready.
+          let attempts = 0;
+          const applyVolumeWhenReady = () => {
+            if (!frame.isConnected || attempts >= 10) return;
+            sendPlayerCommand("setVolume", [Number(volume.value)]);
+            attempts++;
+            window.setTimeout(applyVolumeWhenReady, 500);
+          };
+          applyVolumeWhenReady();
+        }, { once: true });
+        setPlayingState(true);
+      };
+      const togglePlayback = () => {
+        if (isPlaying) {
+          sendPlayerCommand("pauseVideo");
+          setPlayingState(false);
+        } else if (playerHost.querySelector("iframe")) {
+          sendPlayerCommand("playVideo");
+          setPlayingState(true);
+        } else {
+          loadTrack();
+        }
+      };
+      const changeTrack = direction => {
+        trackIndex = (trackIndex + direction + tracks.length) % tracks.length;
+        updateTrack();
+        if (isPlaying) loadTrack();
+      };
+
+      updateTrack();
+      playButton.addEventListener("click", togglePlayback);
+      document.getElementById("radioPrev")?.addEventListener("click", () => changeTrack(-1));
+      document.getElementById("radioNext")?.addEventListener("click", () => changeTrack(1));
+      volume.addEventListener("input", () => sendPlayerCommand("setVolume", [Number(volume.value)]));
+    })();
+  </script>
+  <script>
+    (() => {
+      const grid = document.getElementById("moviesGrid");
+      const title = document.querySelector(".main-header h1");
+      if (title) title.dataset.text = title.textContent.trim();
+      if (!grid || !window.matchMedia("(pointer: fine)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const resetTilt = card => {
+        card.style.setProperty("--tilt-x", "0deg");
+        card.style.setProperty("--tilt-y", "0deg");
+      };
+      grid.addEventListener("pointermove", event => {
+        if (event.pointerType !== "mouse") return;
+        const card = event.target.closest(".car-card");
+        if (!card) return;
+        const bounds = card.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width;
+        const y = (event.clientY - bounds.top) / bounds.height;
+        card.style.setProperty("--tilt-x", `${(0.5 - y) * 9}deg`);
+        card.style.setProperty("--tilt-y", `${(x - 0.5) * 9}deg`);
+      });
+      grid.addEventListener("pointerout", event => {
+        const card = event.target.closest(".car-card");
+        if (card && (!event.relatedTarget || !card.contains(event.relatedTarget))) resetTilt(card);
+      });
+      document.addEventListener("click", event => {
+        const button = event.target.closest(".lucky-pick-btn, #antiSporStart, .anti-spor-box .action-btn");
+        if (!button) return;
+        button.dataset.text = button.textContent.trim();
+        button.classList.remove("is-glitching");
+        void button.offsetWidth;
+        button.classList.add("is-glitching");
+        window.setTimeout(() => button.classList.remove("is-glitching"), 450);
+      });
+    })();
+  </script>
+  <script>
+    (() => {
+      const canvas = document.getElementById("spaceCanvas");
+      const context = canvas?.getContext("2d");
+      if (!canvas || !context) return;
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const finePointer = window.matchMedia("(pointer: fine)");
+      const pointer = { x: -1000, y: -1000, active: false };
+      const stars = [];
+      const sparks = [];
+      let width = 0;
+      let height = 0;
+      let pixelRatio = 1;
+      let animationFrame = 0;
+      let lastSpark = null;
+
+      const themeColor = () => {
+        const values = getComputedStyle(document.body).getPropertyValue("--neon-rgb").trim();
+        return values || "0, 180, 216";
+      };
+      const makeStar = () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - .5) * .22,
+        vy: (Math.random() - .5) * .22,
+        radius: .6 + Math.random() * 1.35,
+        phase: Math.random() * Math.PI * 2
+      });
+      const resize = () => {
+        pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        const targetCount = Math.max(55, Math.min(145, Math.round(width * height / 12500)));
+        while (stars.length < targetCount) stars.push(makeStar());
+        if (stars.length > targetCount) stars.length = targetCount;
+        draw(performance.now(), true);
+      };
+      const draw = (time, staticFrame = false) => {
+        context.clearRect(0, 0, width, height);
+        const rgb = themeColor();
+        const activePointer = pointer.active && finePointer.matches;
+
+        stars.forEach((star, index) => {
+          if (!staticFrame && !reducedMotion.matches) {
+            if (activePointer) {
+              const dx = pointer.x - star.x;
+              const dy = pointer.y - star.y;
+              const distance = Math.hypot(dx, dy);
+              if (distance < 190 && distance > 1) {
+                const pull = (1 - distance / 190) * .00065;
+                star.vx += dx * pull;
+                star.vy += dy * pull;
+              }
+            }
+            star.vx *= .995;
+            star.vy *= .995;
+            star.x += star.vx;
+            star.y += star.vy;
+            if (star.x < -8) star.x = width + 8;
+            if (star.x > width + 8) star.x = -8;
+            if (star.y < -8) star.y = height + 8;
+            if (star.y > height + 8) star.y = -8;
+          }
+          const pulse = .58 + Math.sin(time * .001 + star.phase) * .22;
+          context.beginPath();
+          context.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          context.fillStyle = `rgba(${rgb}, ${pulse})`;
+          context.shadowColor = `rgba(${rgb}, .85)`;
+          context.shadowBlur = star.radius * 7;
+          context.fill();
+
+          if (activePointer) {
+            const distanceToPointer = Math.hypot(pointer.x - star.x, pointer.y - star.y);
+            if (distanceToPointer < 150) {
+              context.beginPath();
+              context.moveTo(star.x, star.y);
+              context.lineTo(pointer.x, pointer.y);
+              context.strokeStyle = `rgba(${rgb}, ${(1 - distanceToPointer / 150) * .22})`;
+              context.lineWidth = .7;
+              context.stroke();
+            }
+          }
+          for (let next = index + 1; next < stars.length; next++) {
+            const other = stars[next];
+            const distance = Math.hypot(star.x - other.x, star.y - other.y);
+            if (distance < 105) {
+              context.beginPath();
+              context.moveTo(star.x, star.y);
+              context.lineTo(other.x, other.y);
+              context.strokeStyle = `rgba(${rgb}, ${(1 - distance / 105) * .11})`;
+              context.lineWidth = .55;
+              context.stroke();
+            }
+          }
+        });
+        context.shadowBlur = 0;
+
+        for (let index = sparks.length - 1; index >= 0; index--) {
+          const spark = sparks[index];
+          const age = (time - spark.born) / spark.life;
+          if (age >= 1) {
+            sparks.splice(index, 1);
+            continue;
+          }
+          spark.x += spark.vx;
+          spark.y += spark.vy;
+          spark.vx *= .97;
+          spark.vy *= .97;
+          context.beginPath();
+          context.arc(spark.x, spark.y, spark.size * (1 - age * .55), 0, Math.PI * 2);
+          context.fillStyle = `rgba(${rgb}, ${(1 - age) * .75})`;
+          context.shadowColor = `rgba(${rgb}, .95)`;
+          context.shadowBlur = 12;
+          context.fill();
+        }
+        context.shadowBlur = 0;
+        if (!reducedMotion.matches) animationFrame = requestAnimationFrame(draw);
+      };
+
+      canvas.style.opacity = "1";
+      window.addEventListener("resize", resize, { passive: true });
+      document.addEventListener("pointermove", event => {
+        if (event.pointerType !== "mouse" || !finePointer.matches || reducedMotion.matches) return;
+        pointer.x = event.clientX;
+        pointer.y = event.clientY;
+        pointer.active = true;
+        if (!lastSpark || Math.hypot(pointer.x - lastSpark.x, pointer.y - lastSpark.y) > 13) {
+          sparks.push({
+            x: pointer.x, y: pointer.y,
+            vx: (Math.random() - .5) * 1.4,
+            vy: (Math.random() - .5) * 1.4,
+            size: 1 + Math.random() * 2,
+            born: performance.now(), life: 420 + Math.random() * 300
+          });
+          if (sparks.length > 90) sparks.shift();
+          lastSpark = { x: pointer.x, y: pointer.y };
+        }
+      }, { passive: true });
+      document.addEventListener("pointerleave", () => { pointer.active = false; });
+      reducedMotion.addEventListener?.("change", () => {
+        cancelAnimationFrame(animationFrame);
+        if (!reducedMotion.matches) animationFrame = requestAnimationFrame(draw);
+        else draw(performance.now(), true);
+      });
+      resize();
+      if (!reducedMotion.matches) animationFrame = requestAnimationFrame(draw);
+
+      // Short synthesized HUD tones avoid external audio files and load dependencies.
+      let audioContext;
+      let lastHoverSound = 0;
+      const playTone = (frequency, duration, volume, endFrequency = frequency) => {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          audioContext ||= new AudioContextClass();
+          if (audioContext.state === "suspended") audioContext.resume();
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          const now = audioContext.currentTime;
+          oscillator.type = "sine";
+          oscillator.frequency.setValueAtTime(frequency, now);
+          oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), now + duration);
+          gain.gain.setValueAtTime(.0001, now);
+          gain.gain.exponentialRampToValueAtTime(volume, now + .012);
+          gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(now);
+          oscillator.stop(now + duration + .02);
+        } catch (_) {}
+      };
+      document.addEventListener("pointerover", event => {
+        if (event.pointerType !== "mouse") return;
+        const target = event.target.closest(".nav-btn, .tab-btn, .sort-btn, .action-btn, .details-btn, .car-card, .theme-dot");
+        if (!target || target.contains(event.relatedTarget)) return;
+        const now = performance.now();
+        if (now - lastHoverSound < 110) return;
+        lastHoverSound = now;
+        playTone(target.matches(".car-card") ? 660 : 780, .075, .018, 540);
+      }, { passive: true });
+      document.addEventListener("click", event => {
+        const target = event.target.closest("button, .car-card");
+        if (!target) return;
+        if (target.matches(".anti-spor-box .action-btn, .smart-pick-box .action-btn, #antiSporStart")) {
+          playTone(240, .32, .045, 1050);
+          window.setTimeout(() => playTone(1050, .12, .028, 740), 180);
+        } else {
+          playTone(520, .09, .028, 720);
+        }
+      });
+    })();
+  </script>
+  <script>
+    (() => {
+      // Short-lived themed Matrix-style loader.
+      const loader = document.getElementById("digitalRainLoader");
+      const rainCanvas = document.getElementById("digitalRainCanvas");
+      const rainContext = rainCanvas?.getContext("2d");
+      let rainFrame = 0;
+      let rainColumns = [];
+      let rainFontSize = 16;
+      const resizeRain = () => {
+        if (!rainCanvas || !rainContext) return;
+        const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+        rainCanvas.width = Math.round(window.innerWidth * ratio);
+        rainCanvas.height = Math.round(window.innerHeight * ratio);
+        rainCanvas.style.width = `${window.innerWidth}px`;
+        rainCanvas.style.height = `${window.innerHeight}px`;
+        rainContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+        rainFontSize = window.innerWidth < 600 ? 13 : 16;
+        rainColumns = Array.from({ length: Math.ceil(window.innerWidth / rainFontSize) }, () => Math.random() * -45);
+      };
+      const drawRain = () => {
+        if (!loader?.isConnected || !rainContext) return;
+        const rgb = getComputedStyle(document.body).getPropertyValue("--neon-rgb").trim() || "0, 180, 216";
+        rainContext.fillStyle = "rgba(4, 6, 15, .12)";
+        rainContext.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        rainContext.font = `700 ${rainFontSize}px monospace`;
+        rainColumns.forEach((row, index) => {
+          const digit = Math.random() > .5 ? "1" : "0";
+          const x = index * rainFontSize;
+          rainContext.fillStyle = `rgba(${rgb}, ${.35 + Math.random() * .65})`;
+          rainContext.shadowColor = `rgba(${rgb}, .8)`;
+          rainContext.shadowBlur = 8;
+          rainContext.fillText(digit, x, row * rainFontSize);
+          if (row * rainFontSize > window.innerHeight && Math.random() > .975) rainColumns[index] = 0;
+          else rainColumns[index] += .45 + Math.random() * .55;
+        });
+        rainContext.shadowBlur = 0;
+        rainFrame = requestAnimationFrame(drawRain);
+      };
+      if (rainCanvas && rainContext) {
+        resizeRain();
+        drawRain();
+        window.addEventListener("resize", resizeRain, { passive: true });
+      }
+      window.setTimeout(() => {
+        loader?.classList.add("is-leaving");
+        cancelAnimationFrame(rainFrame);
+        window.setTimeout(() => loader?.remove(), 500);
+      }, 1500);
+
+      // Persist and apply the neon glow strength.
+      const powerInput = document.getElementById("neonPowerRange");
+      const powerOutput = document.getElementById("neonPowerValue");
+      const powerKey = "cineNavigatorNeonPower";
+      if (powerInput) {
+        try {
+          const saved = Number(localStorage.getItem(powerKey));
+          if (Number.isFinite(saved) && saved >= 0 && saved <= 32) powerInput.value = String(saved);
+        } catch (_) {}
+        const applyNeonPower = () => {
+          const value = Number(powerInput.value);
+          document.documentElement.style.setProperty("--neon-blur", `${value}px`);
+          if (powerOutput) powerOutput.value = String(value);
+          try { localStorage.setItem(powerKey, String(value)); } catch (_) {}
+        };
+        powerInput.addEventListener("input", applyNeonPower);
+        applyNeonPower();
+      }
+
+      // Flight-mode easter egg: clear the code to restore the regular catalog filters.
+      const search = document.getElementById("movieSearch");
+      const grid = document.getElementById("moviesGrid");
+      const count = document.getElementById("catalogMovieCount");
+      if (!search || !grid) return;
+      let flightMode = false;
+      let chimeContext;
+      const playFlightChime = () => {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          chimeContext ||= new AudioContextClass();
+          if (chimeContext.state === "suspended") chimeContext.resume();
+          [880, 660].forEach((frequency, index) => {
+            const oscillator = chimeContext.createOscillator();
+            const gain = chimeContext.createGain();
+            const start = chimeContext.currentTime + index * .36;
+            oscillator.type = "sine";
+            oscillator.frequency.setValueAtTime(frequency, start);
+            gain.gain.setValueAtTime(.0001, start);
+            gain.gain.exponentialRampToValueAtTime(.07, start + .035);
+            gain.gain.exponentialRampToValueAtTime(.0001, start + .32);
+            oscillator.connect(gain);
+            gain.connect(chimeContext.destination);
+            oscillator.start(start);
+            oscillator.stop(start + .34);
+          });
+        } catch (_) {}
+      };
+      const flightTitlePattern = /интерстеллар|экипаж|топ ган|авиатор|чудо на гудзоне|салют-7|время первых|гравитац|марсианин|поймай меня, если сможешь|в бой идут одни/i;
+      const applyFlightFilter = () => {
+        if (!flightMode) return;
+        const cards = [...grid.querySelectorAll(".car-card")];
+        let visible = 0;
+        cards.forEach(card => {
+          const title = card.querySelector(".car-title")?.textContent || "";
+          const show = flightTitlePattern.test(title);
+          card.hidden = !show;
+          if (show) visible++;
+        });
+        if (count) count.textContent = `✈️ Авиа-режим · ${visible} фильмов про небо, пилотов и космос`;
+      };
+      const enterFlightMode = () => {
+        flightMode = true;
+        playFlightChime();
+        const savedCode = search.value;
+        search.value = "";
+        const watchlistButton = document.getElementById("watchlistFilterBtn");
+        if (watchlistButton?.classList.contains("active")) watchlistButton.click();
+        const watchedToggle = document.getElementById("hideWatchedToggle");
+        if (watchedToggle?.checked) {
+          watchedToggle.checked = false;
+          watchedToggle.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        if (typeof window.filterGenre === "function") window.filterGenre("all");
+        else if (typeof window.applyMovieFilters === "function") window.applyMovieFilters();
+        search.value = savedCode;
+        applyFlightFilter();
+        window.setTimeout(applyFlightFilter, 0);
+      };
+      search.addEventListener("input", () => {
+        const code = search.value.trim();
+        if (code === "737" || code === "320") {
+          if (!flightMode) enterFlightMode();
+          return;
+        }
+        if (flightMode) {
+          flightMode = false;
+          grid.querySelectorAll(".car-card[hidden]").forEach(card => { card.hidden = false; });
+        }
+      });
+      if (window.MutationObserver) {
+        new MutationObserver(applyFlightFilter).observe(grid, { childList: true, subtree: true });
+      }
+    })();
+  </script>
+</body>
+</html>
